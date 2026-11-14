@@ -11,6 +11,19 @@ param location string = 'centralindia'
 @maxLength(9)
 param envName string = 'dev'
 
+@description('Regions where resources are allowed')
+param allowedLocations array = [
+  'centralindia'
+  'uaenorth'
+]
+
+@allowed([
+  'Default'
+  'DoNotEnforce'
+])
+param policyEnforcement string = 'DoNotEnforce'
+
+
 var rgName = 'RG-LandingZone-${envName}'
 var tags = {
   project: 'LandingZone'
@@ -18,7 +31,7 @@ var tags = {
   owner: 'Afi'
 } 
 
-resource rg  'microsoft.Resources/resourceGroups@2021-04-01' = {
+resource rg  'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: rgName
   location: location
   tags: {
@@ -37,6 +50,14 @@ module storage 'modules/storage.bicep' ={
     tags: tags
   }
 }
+module policy 'modules/policy.bicep' = {
+  name: 'policy-deployment'
+  params: {
+    allowedLocations: allowedLocations
+    enforcement: policyEnforcement
+  }
+}
+
 
 output resourceGroupName string = rg.name
 output storageAccountName string = storage.outputs.storageAccountName
