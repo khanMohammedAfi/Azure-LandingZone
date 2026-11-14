@@ -58,6 +58,18 @@ module policy 'modules/policy.bicep' = {
   }
 }
 
+module monitoring 'modules/monitoring.bicep' = {
+  name: 'monitoring-deployment'
+  scope: rg
+  params: {
+    location: location
+    workspaceName: 'law-landingzone-${envName}'
+    tags: tags
+  }
+}
+
+
 
 output resourceGroupName string = rg.name
 output storageAccountName string = storage.outputs.storageAccountName
+output logAnalyticsWorkspaceName string = monitoring.outputs.workspaceName
