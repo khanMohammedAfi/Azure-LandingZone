@@ -48,6 +48,7 @@ module storage 'modules/storage.bicep' ={
     location:location
     namePrefix:'lz${envName}'
     tags: tags
+    workspaceId: monitoring.outputs.workspaceId
   }
 }
 module policy 'modules/policy.bicep' = {
