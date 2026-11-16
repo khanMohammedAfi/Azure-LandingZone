@@ -69,8 +69,19 @@ module monitoring 'modules/monitoring.bicep' = {
   }
 }
 
+module network 'modules/network.bicep' = {
+  name: 'network-deployment'
+  scope: rg
+  params: {
+    location: location
+    vnetName: 'vnet-landingzone-${envName}'
+    tags: tags
+  }
+}
+
 
 
 output resourceGroupName string = rg.name
 output storageAccountName string = storage.outputs.storageAccountName
 output logAnalyticsWorkspaceName string = monitoring.outputs.workspaceName
+output vnetName string = network.outputs.vnetName
