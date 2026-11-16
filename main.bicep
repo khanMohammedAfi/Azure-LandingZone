@@ -17,6 +17,9 @@ param allowedLocations array = [
   'uaenorth'
 ]
 
+@description('Entra ID group object ID that gets Reader on the resource group')
+param readersGroupObjectId string = ''
+
 @allowed([
   'Default'
   'DoNotEnforce'
@@ -76,6 +79,15 @@ module network 'modules/network.bicep' = {
     location: location
     vnetName: 'vnet-landingzone-${envName}'
     tags: tags
+  }
+}
+
+
+module rbac 'modules/rbac.bicep' = {
+  name: 'rbac-deployment'
+  scope: rg
+  params: {
+    readersGroupObjectId: readersGroupObjectId
   }
 }
 
