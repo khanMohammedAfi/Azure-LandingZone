@@ -40,3 +40,19 @@ resource requireTagAssignment 'Microsoft.Authorization/policyAssignments@2022-06
     }
   }
 }
+
+resource denyPublicIpAssignment 'Microsoft.Authorization/policyAssignments@2022-06-01' = {
+  name: 'lz-deny-public-ip'
+  properties: {
+    displayName: 'Landing zone: public IP addresses not allowed'
+    policyDefinitionId: tenantResourceId('Microsoft.Authorization/policyDefinitions', '6c112d4e-5bc7-47ae-a041-ea2d9dccd749')
+    enforcementMode: enforcement
+    parameters: {
+      listOfResourceTypesNotAllowed: {
+        value: [
+          'Microsoft.Network/publicIPAddresses'
+        ]
+      }
+    }
+  }
+}
