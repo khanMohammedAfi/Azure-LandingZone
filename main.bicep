@@ -15,6 +15,7 @@ param envName string = 'dev'
 param allowedLocations array = [
   'centralindia'
   'uaenorth'
+  'southindia'
 ]
 
 @description('Entra ID group object ID that gets Reader on the resource group')
@@ -25,6 +26,12 @@ param readersGroupObjectId string = ''
   'DoNotEnforce'
 ])
 param policyEnforcement string = 'DoNotEnforce'
+
+@description('Region for Azure OpenAI. gpt-4.1-mini with pay-per-token (GlobalStandard) is not offered in Central India.')
+param openAiLocation string = 'southindia'
+
+@description('Azure OpenAI account name. Must be globally unique.')
+param openAiAccountName string = 'oai-plmv-afi'
 
 
 var rgName = 'RG-LandingZone-${envName}'
@@ -91,9 +98,20 @@ module rbac 'modules/rbac.bicep' = {
   }
 }
 
+module openai 'modules/openai.bicep' = {
+  name: 'openai-deployment'
+  scope: rg
+  params: {
+    accountName: openAiAccountName
+    location: openAiLocation
+    tags: tags
+  }
+}
+
 
 
 output resourceGroupName string = rg.name
 output storageAccountName string = storage.outputs.storageAccountName
 output logAnalyticsWorkspaceName string = monitoring.outputs.workspaceName
 output vnetName string = network.outputs.vnetName
+output openAiEndpoint string = openai.outputs.endpoint
